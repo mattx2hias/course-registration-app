@@ -1,6 +1,7 @@
 package dev.matthias.data;
 
 import dev.matthias.entities.Course;
+import dev.matthias.services.FacultyServiceImpl;
 import dev.matthias.utilities.ConnectionUtil;
 import dev.matthias.utilities.LogLevel;
 import dev.matthias.utilities.Logger;
@@ -36,7 +37,7 @@ public boolean createCourse(Course course) {
 //                return false;
 //            }
 
-            String query = "insert into course values (?, ?, ?, ?, ?, ?, ?)";
+            String query = "insert into course values (?, ?, ?, ?, ?, ?)";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
 
@@ -45,8 +46,7 @@ public boolean createCourse(Course course) {
             ps.setString(3, course.getDescription());
             ps.setLong(4, course.getStart());
             ps.setLong(5, course.getEnd());
-            ps.setInt(6, course.getfId());
-            ps.setInt(7, course.getCapacity());
+            ps.setInt(6, course.getCapacity());
 
             if(ps.executeUpdate() == 1) {
                 Logger.log("Created " + course.getId(), LogLevel.INFO);
@@ -86,11 +86,11 @@ public boolean createCourse(Course course) {
                 course.setDescription(rs.getString("description"));
                 course.setStart(rs.getInt("start_date"));
                 course.setEnd(rs.getInt("end_date"));
-                course.setfId(rs.getInt("faculty_id"));
                 course.setCapacity(rs.getInt("capacity"));
                 return course;
             } else {
                 System.out.println("Failed to find record.");
+                new FacultyServiceImpl().facultyPrompt();
                 return null;
             }
         } catch (SQLException e) {
@@ -111,21 +111,22 @@ public boolean createCourse(Course course) {
     public Course updateCourse(Course course) {
         try {
             Connection conn = ConnectionUtil.createConnection();
-            String query = "update course set course_id = ?, course_name = ?, description = ?," +
-                    " start_date = ?, end_date = ?, faculty_id = ?, capacity = ?";
+            String query = "update course set course_name = ?, description = ?," +
+                    " start_date = ?, end_date = ?, capacity = ? where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, course.getId());
-            ps.setString(2, course.getName());
-            ps.setString(3, course.getDescription());
-            ps.setLong(4, course.getStart());
-            ps.setLong(5, course.getEnd());
-            ps.setInt(6, course.getfId());
-            ps.setInt(7, course.getCapacity());
+            ps.setString(1, course.getName());
+            ps.setString(2, course.getDescription());
+            ps.setLong(3, course.getStart());
+            ps.setLong(4, course.getEnd());
+            ps.setInt(5, course.getCapacity());
+            ps.setString(6, course.getId());
             ps.executeUpdate();
             Logger.log("Updated " + course.getId(), LogLevel.INFO);
             return course;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Failed to update " + course.getId() + ".");
+            new FacultyServiceImpl().facultyPrompt();
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
         }
@@ -150,7 +151,9 @@ public boolean createCourse(Course course) {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Failed to delete " + id + ".");
             Logger.log(e.getMessage(), LogLevel.ERROR);
+            new FacultyServiceImpl().facultyPrompt();
             return false;
         }
     }

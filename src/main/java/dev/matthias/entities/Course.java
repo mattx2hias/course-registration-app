@@ -79,4 +79,17 @@ public class Course {
     public void setfId(int fId) {
         this.fId = fId;
     }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                ", fId=" + fId +
+                ", capacity=" + capacity +
+                '}';
+    }
 }

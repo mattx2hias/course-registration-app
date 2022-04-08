@@ -9,20 +9,8 @@ import java.util.Scanner;
 
 public class LoginUtil {
 
-    public static void login(int status) {
-        Scanner s = new Scanner(System.in);
-        String email = null;
-        String password = null;
+    public static boolean login(int status, String email, String password) {
         String tableName = null;
-        try{
-            System.out.println("Enter email: ");
-            email = s.next();
-            System.out.println("Enter password: ");
-            password = s.next();
-        }catch(InputMismatchException e) {
-            e.printStackTrace();
-        }finally { s.close(); }
-
         if(status == 1) tableName="student";
             else tableName="faculty";
 
@@ -34,12 +22,14 @@ public class LoginUtil {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-
+                return rs.getInt("count") > 0;
             } else {
+                return false;
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 }

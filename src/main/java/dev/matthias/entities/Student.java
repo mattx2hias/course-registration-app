@@ -7,6 +7,7 @@ public class Student {
     private String firstName;
     private String lastName;
     private String year;
+    private String major;
 
     public Student(int studentID, String firstName, String lastName, String year) {
         this.studentID = studentID;
