@@ -8,7 +8,9 @@ public interface CourseDAO {
 
     Course readCourseById(String id);
 
-    Course updateCourse(Course course);
+    boolean updateCourse(Course course);
 
     boolean deleteCourseById(String id);
+
+    boolean decrementCapacity(String id);
 }

@@ -53,9 +53,9 @@ public class CourseDaoTests {
     void updateCourseTest() {
         Course testCourse = new Course("SPG123", "Spongebob", "An in-depth look at the metaphysics of the coveted children's show.",
                 LocalDate.of(2022, 8, 15), LocalDate.of(2022, 12, 14), 99,90);
-        Course updatedCourse = courseDAO.updateCourse(testCourse);
+        //Course updatedCourse = courseDAO.updateCourse(testCourse);
 
-        Assertions.assertEquals(99, updatedCourse.getfId());
+        Assertions.assertTrue(courseDAO.updateCourse(testCourse));
     }
 
     /***************************

@@ -1,10 +1,17 @@
 package dev.matthias.data;
 
+import dev.matthias.entities.Student;
+import java.util.List;
+
 public interface StudentDAO {
 
-    void viewCourseCatalog();
+    boolean registerNewAccount(Student stud);
 
-    void registerForCourse();
+    boolean registerForCourse(int studentID, String courseID);
 
-    void viewEnrolledCourses();
+    String[] readEnrolledCourses(int studentID);
+
+    boolean cancelRegistration(int studentID, String courseID);
+
+    List<String> readCourseCatalog();
 }

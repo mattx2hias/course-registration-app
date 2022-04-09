@@ -22,7 +22,6 @@ public class CourseDAOPostgres implements CourseDAO{
 
     /**
      * Insert new record into course table.
-     * Exits if {@link CourseDAOPostgres#checkIdForDuplicate} returns true.
      *
      * @param course Course object to be inserted into course table
      * @return Course object that was passed and inserted
@@ -31,12 +30,6 @@ public class CourseDAOPostgres implements CourseDAO{
     @Override
 public boolean createCourse(Course course) {
         try {
-//            if(CourseDAOPostgres.checkIdForDuplicate(course)) {
-//                Logger.log("Cannot add course with the same ID.", LogLevel.WARNING);
-//                System.out.println("Cannot add duplicate entries.");
-//                return false;
-//            }
-
             String query = "insert into course values (?, ?, ?, ?, ?, ?)";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
@@ -89,8 +82,6 @@ public boolean createCourse(Course course) {
                 course.setCapacity(rs.getInt("capacity"));
                 return course;
             } else {
-                System.out.println("Failed to find record.");
-                new FacultyServiceImpl().facultyPrompt();
                 return null;
             }
         } catch (SQLException e) {
@@ -108,7 +99,7 @@ public boolean createCourse(Course course) {
      */
 
     @Override
-    public Course updateCourse(Course course) {
+    public boolean updateCourse(Course course) {
         try {
             Connection conn = ConnectionUtil.createConnection();
             String query = "update course set course_name = ?, description = ?," +
@@ -122,13 +113,11 @@ public boolean createCourse(Course course) {
             ps.setString(6, course.getId());
             ps.executeUpdate();
             Logger.log("Updated " + course.getId(), LogLevel.INFO);
-            return course;
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Failed to update " + course.getId() + ".");
-            new FacultyServiceImpl().facultyPrompt();
             Logger.log(e.getMessage(), LogLevel.ERROR);
-            return null;
+            return false;
         }
     }
 
@@ -151,30 +140,24 @@ public boolean createCourse(Course course) {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Failed to delete " + id + ".");
             Logger.log(e.getMessage(), LogLevel.ERROR);
-            new FacultyServiceImpl().facultyPrompt();
             return false;
         }
     }
 
-    /**
-     * Checks for duplicate entries based on course_id attribute.
-     *
-     * @return true if duplicate is found in course table
-     */
-    public static boolean checkIdForDuplicate(Course course) {
+    @Override
+    public boolean decrementCapacity(String id) {
         try {
-            System.out.println(course.getId());
             Connection conn = ConnectionUtil.createConnection();
-            String query = "select count(*) from course where course_id = ?";
+            Course c = this.readCourseById(id);
+            int capacity = c.getCapacity();
+            capacity = capacity - 1;
+            String query = "update course set capacity = ? where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, course.getId());
-
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
-                return rs.getInt("count") > 0;
-            } else return false;
+            ps.setInt(1, capacity);
+            ps.setString(2, id.toUpperCase(Locale.ROOT));
+            ps.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);

@@ -4,11 +4,10 @@ import dev.matthias.entities.Course;
 
 public interface FacultyService {
 
-    void facultyPrompt();
+    boolean createNewCourse(Course c);
 
-    void createNewCourse();
+    boolean updateCourseDetails(Course c);
 
-    void updateCourseDetails();
+    boolean deleteCourse(String id);
 
-    void deleteCourse();
 }

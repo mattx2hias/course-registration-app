@@ -1,67 +1,46 @@
 package dev.matthias.services;
 
+import dev.matthias.data.CourseDAO;
 import dev.matthias.data.CourseDAOPostgres;
+import dev.matthias.data.StudentDAO;
 import dev.matthias.data.StudentDAOPostgres;
+import dev.matthias.entities.Student;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.List;
 
 public class StudentServiceImpl implements StudentService{
-    @Override
-    public void studentPrompt() {
-        System.out.println( "==================Student_Options===============\n" +
-                            "1. View course catalog\t2. Register for a course\n" +
-                            "3. Cancel registration\t4. View enrolled courses\n" +
-                            "5. Logout " +
-                            "================================================");
-        Scanner s = new Scanner(System.in);
-        try {
-            switch(s.nextInt()) {
-                case 1: viewCourseCatalog(); break;
-                case 2: registerForCourse(); break;
-                case 3: cancelRegistration(); break;
-                case 4: viewEnrolledCourses(); break;
-                case 5: break;
-            }
-        } catch(InputMismatchException e) {
-            e.printStackTrace();
-            System.out.println("Invalid input.");
-            studentPrompt();
-        } finally { s.close(); }
+
+    StudentDAO sDao;
+    CourseDAO cDao;
+
+    public StudentServiceImpl() {
+        this.sDao = new StudentDAOPostgres();
+        this.cDao = new CourseDAOPostgres();
     }
 
     @Override
-    public boolean registerForCourse() {
-        System.out.println("Enter Course ID: ");
-        //option to view course catalog
-        Scanner s = new Scanner(System.in).useDelimiter("\n");
-        String courseID;
-        try {
-            courseID = s.next();
-
-        } catch(InputMismatchException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean registerForCourse(int id, String courseID) {
+        //check if prereqs are satisfied
+        //check if already enrolled
+        if(this.sDao.registerForCourse(id, courseID)) {
+            this.cDao.decrementCapacity(courseID);
+            return true;
+        } else return false;
     }
 
     @Override
-    public boolean viewCourseCatalog() {
-        System.out.println( "================================");
-        new StudentDAOPostgres().viewCourseCatalog();
-        System.out.println("================================");
-        new StudentServiceImpl().studentPrompt();
-        return false;
+    public List<String> viewCourseCatalog() {
+        return this.sDao.readCourseCatalog();
     }
 
     @Override
-    public boolean cancelRegistration() {
-        System.out.println("cancel registration");
-        return false;
+    public boolean cancelRegistration(Student s, String courseID) {
+        //check if student is enrolled in requested course
+        return this.sDao.cancelRegistration(s.getStudentID(), courseID);
     }
 
     @Override
-    public void viewEnrolledCourses() {
-        System.out.println("view enrolled courses");
+    public String[] viewEnrolledCourses(int id) {
+        return this.sDao.readEnrolledCourses(id);
     }
 }

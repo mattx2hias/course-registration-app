@@ -8,11 +8,11 @@ public class LoginTests {
 
     @Test
     void studentLoginTest() {
-        Assertions.assertTrue(LoginUtil.login(1, "pstar@uow.edu", "0000"));
+        Assertions.assertNotNull(LoginUtil.sLogin("pstar@uow.edu", "0000"));
     }
 
     @Test
     void facultyLoginTest() {
-        Assertions.assertTrue(LoginUtil.login(2, "ppuff@uow.edu", "0000"));
+        Assertions.assertNotNull(LoginUtil.fLogin("ppuff@uow.edu", "0000"));
     }
 }

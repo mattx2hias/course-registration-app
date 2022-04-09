@@ -1,14 +1,17 @@
 package dev.matthias.services;
 
+import dev.matthias.entities.Course;
+import dev.matthias.entities.Student;
+
+import java.util.List;
+
 public interface StudentService {
 
-    void studentPrompt();
+    boolean registerForCourse(int id, String courseID);
 
-    boolean registerForCourse();
+    List<String> viewCourseCatalog();
 
-    boolean viewCourseCatalog();
+    boolean cancelRegistration(Student s, String courseID);
 
-    boolean cancelRegistration();
-
-    void viewEnrolledCourses();
+    String[] viewEnrolledCourses(int id);
 }
