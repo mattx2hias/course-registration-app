@@ -26,22 +26,22 @@ public class FacultyPrompt {
 
     public void mainMenu() {
         System.out.println( "============Faculty_Options============\n" +
-                            "1. Create course\t 2. Update course \n" +
-                            "3. Delete course\t 4. Logout      \n" +
+                            "1->Create course   2->Update course \n" +
+                            "3->Delete course   4->Logout      \n" +
                             "=======================================");
         Scanner s = new Scanner(System.in);
         try {
             switch(s.nextInt()) {
-                case 1: break;
-                case 2: break;
-                case 3: break;
+                case 1: createCoursePrompt(); break;
+                case 2: updateCoursePrompt(); break;
+                case 3: deleteCoursePrompt(); break;
                 case 4: LoginPrompt.login(); break;
             }
         } catch(InputMismatchException e) {
             e.printStackTrace();
             System.out.println("Invalid input.");
             this.mainMenu();
-        } finally { s.close(); }
+        }
     }
 
     private void createCoursePrompt() {
@@ -73,22 +73,21 @@ public class FacultyPrompt {
     }
 
     private void updateCoursePrompt() {
-        Scanner s = new Scanner(System.in).useDelimiter("\n");
-        int selection = 0;
 
-        try {
-            System.out.print("Enter course id to edit: ");
+        try (Scanner s = new Scanner(System.in).useDelimiter("\n")) {
+            int selection = 0;
+            System.out.print("Enter course ID to edit: ");
             String courseId = s.next();
             Course updatedCourse = cDao.readCourseById(courseId);
-            System.out.println("###---Editing---###");
+            System.out.println("######___Editing___######");
             System.out.println(updatedCourse.toString());
-            System.out.println("###---Editing---###");
-            System.out.println("1. Course ID\t2. Course Name\t3. Course Description\n" +
-                    "4. Start Date\t 5. End Date\t 6. Capacity");
+            System.out.println("######___Editing___######");
+            System.out.println( "1->Course ID  | 2->Course Name | 3->Course Description\n" +
+                                "4->Start Date | 5->End Date    | 6->Capacity");
             selection = s.nextInt();
-            switch(selection) {
+            switch (selection) {
                 case 1:
-                    System.out.print("Enter course id: ");
+                    System.out.print("Enter course ID: ");
                     updatedCourse.setId(s.next());
                     break;
                 case 2:
@@ -114,25 +113,21 @@ public class FacultyPrompt {
         } catch (InputMismatchException e) {
             e.printStackTrace();
             this.mainMenu();
-        } finally {
-            s.close();
         }
     }
 
     private void deleteCoursePrompt() {
-        System.out.println("###---Delete Course---###");
+        System.out.println("######___Delete Course___######");
         Scanner s = new Scanner(System.in).useDelimiter("\n");
         try {
-            System.out.print("Enter course id to delete: ");
+            System.out.print("Enter course ID to delete: ");
             String courseId = s.next();
             Course courseToDelete = cDao.readCourseById(courseId);
-            System.out.print("Delete " + courseToDelete.getId() + " ?[Y or N]");
+            System.out.print("Delete " + courseToDelete.getId() + "?[Y or N]: ");
             String choice = s.next();
             if(RegexUtil.yesOrNoInput(choice)) {
-                cDao.deleteCourseById(courseId);
-                System.out.println(courseToDelete.getId() + " Deleted.");
-                //remove course from students enrolled list
-                //this.service.removeAllStudents(courseId);
+                if(this.service.deleteCourse(courseId)) System.out.println(courseToDelete.getId() + " Deleted.");
+                    else System.out.println("Course deletion failed.");
                 this.mainMenu();
             }
             // add password check for confirmation

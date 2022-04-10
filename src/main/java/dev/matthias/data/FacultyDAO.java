@@ -2,5 +2,5 @@ package dev.matthias.data;
 
 public interface FacultyDAO {
 
-    boolean removeEnrolledStudents(String id);
+    boolean removeEnrolledStudents(String cId);
 }

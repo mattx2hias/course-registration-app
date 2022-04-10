@@ -5,11 +5,6 @@ import dev.matthias.data.CourseDAOPostgres;
 import dev.matthias.data.FacultyDAO;
 import dev.matthias.data.FacultyDAOPostgres;
 import dev.matthias.entities.Course;
-import dev.matthias.entities.Faculty;
-import dev.matthias.utilities.RegexUtil;
-
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public class FacultyServiceImpl implements FacultyService{
 
@@ -33,8 +28,8 @@ public class FacultyServiceImpl implements FacultyService{
     }
 
     @Override
-    public boolean deleteCourse(String id) {
-        if(this.fDao.removeEnrolledStudents(id)) return this.cDao.deleteCourseById(id);
+    public boolean deleteCourse(String cId) {
+        if(this.fDao.removeEnrolledStudents(cId)) return this.cDao.deleteCourseById(cId);
             else return false;
     }
 

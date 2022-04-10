@@ -8,6 +8,5 @@ public interface FacultyService {
 
     boolean updateCourseDetails(Course c);
 
-    boolean deleteCourse(String id);
-
+    boolean deleteCourse(String cId);
 }

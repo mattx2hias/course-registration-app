@@ -10,13 +10,13 @@ import java.sql.*;
 public class StudentDAOPostgres implements StudentDAO{
 
     @Override
-    public String[] readEnrolledCourses(int studentID) {
+    public String[] readEnrolledCourses(int sId) {
         try{
             String[] courseList = new String[10];
             String query = "select course_id from student_course where student_id = ?";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, studentID);
+            ps.setInt(1, sId);
             ResultSet rs = ps.executeQuery();
             int i = 0;
             while(rs.next()) {
@@ -54,14 +54,14 @@ public class StudentDAOPostgres implements StudentDAO{
     }
 
     @Override
-    public boolean registerForCourse(int studentID, String courseID) {
+    public boolean registerForCourse(int sId, String cId) {
         // check if prereqs are completed
         try {
             String query = "insert into student_course values (?, ?);";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, studentID);
-            ps.setString(2, courseID);
+            ps.setInt(1, sId);
+            ps.setString(2, cId);
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -72,13 +72,13 @@ public class StudentDAOPostgres implements StudentDAO{
     }
 
     @Override
-    public boolean cancelRegistration(int sID, String cID) {
+    public boolean cancelRegistration(int sId, String cId) {
         try {
             String query = "delete from student_course where student_id = ? and course_id = ?;";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, sID);
-            ps.setString(2, cID);
+            ps.setInt(1, sId);
+            ps.setString(2, cId);
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -103,6 +103,40 @@ public class StudentDAOPostgres implements StudentDAO{
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
+        }
+    }
+
+    @Override
+    public boolean checkIfIdExists(int sId) {
+        try {
+            String query = "select count(*) from student where student_id = ?";
+            Connection conn = ConnectionUtil.createConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, sId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt("count") > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.log(e.getMessage(), LogLevel.ERROR);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkIfEmailExists(String email) {
+        try {
+            String query = "select count(*) from student where email = ?";
+            Connection conn = ConnectionUtil.createConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt("count") > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.log(e.getMessage(), LogLevel.ERROR);
+            return false;
         }
     }
 }

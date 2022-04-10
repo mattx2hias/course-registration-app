@@ -7,6 +7,7 @@ import dev.matthias.data.StudentDAOPostgres;
 import dev.matthias.entities.Student;
 
 import java.util.List;
+import java.util.Random;
 
 public class StudentServiceImpl implements StudentService{
 
@@ -19,11 +20,11 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public boolean registerForCourse(int id, String courseID) {
+    public boolean registerForCourse(int id, String cId) {
         //check if prereqs are satisfied
         //check if already enrolled
-        if(this.sDao.registerForCourse(id, courseID)) {
-            this.cDao.decrementCapacity(courseID);
+        if(this.sDao.registerForCourse(id, cId)) {
+            this.cDao.decrementCapacity(cId);
             return true;
         } else return false;
     }
@@ -34,13 +35,30 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public boolean cancelRegistration(Student s, String courseID) {
+    public boolean cancelRegistration(Student s, String cId) {
         //check if student is enrolled in requested course
-        return this.sDao.cancelRegistration(s.getStudentID(), courseID);
+        return this.sDao.cancelRegistration(s.getStudentID(), cId);
     }
 
     @Override
-    public String[] viewEnrolledCourses(int id) {
-        return this.sDao.readEnrolledCourses(id);
+    public String[] viewEnrolledCourses(int cId) {
+        return this.sDao.readEnrolledCourses(cId);
     }
+
+    @Override
+    public boolean registerNewAccount(Student student) {
+        return this.sDao.registerNewAccount(student);
+    }
+
+    @Override
+    public int generateNewStudentId() {
+        Random rand;
+        int sId;
+        do {
+            rand = new Random();
+            sId = rand.nextInt(9999-1000) + 1000;
+        } while(this.sDao.checkIfIdExists(sId));
+        return sId;
+    }
+
 }

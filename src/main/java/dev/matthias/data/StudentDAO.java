@@ -5,13 +5,18 @@ import java.util.List;
 
 public interface StudentDAO {
 
-    boolean registerNewAccount(Student stud);
+    boolean registerNewAccount(Student student);
 
-    boolean registerForCourse(int studentID, String courseID);
+    boolean registerForCourse(int studentID, String courseId);
 
-    String[] readEnrolledCourses(int studentID);
+    String[] readEnrolledCourses(int studentId);
 
-    boolean cancelRegistration(int studentID, String courseID);
+    boolean cancelRegistration(int studentId, String courseId);
 
     List<String> readCourseCatalog();
+
+    boolean checkIfIdExists(int sId);
+
+    boolean checkIfEmailExists(String email);
+
 }

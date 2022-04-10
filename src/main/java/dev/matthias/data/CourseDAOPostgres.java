@@ -24,7 +24,7 @@ public class CourseDAOPostgres implements CourseDAO{
      * Insert new record into course table.
      *
      * @param course Course object to be inserted into course table
-     * @return Course object that was passed and inserted
+     * @return boolean
      */
 
     @Override
@@ -59,17 +59,17 @@ public boolean createCourse(Course course) {
     /**
      * Select query based on id(refers to course_id).
      *
-     * @param id the id that is used to pull from the course_id attribute
+     * @param cId the id that is used to pull from the course_id attribute
      * @return Course object that was queried from the course table
      */
 
     @Override
-    public Course readCourseById(String id) {
+    public Course readCourseById(String cId) {
         try {
             Connection conn = ConnectionUtil.createConnection();
             String query = "select * from course where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, id.toUpperCase(Locale.ROOT));
+            ps.setString(1, cId.toUpperCase(Locale.ROOT));
 
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
@@ -95,7 +95,7 @@ public boolean createCourse(Course course) {
      *  Update query to the course table based on the passed Course object.
      *
      * @param course the course with the updated/modified fields to be changed
-     * @return the same course that was passed in
+     * @return boolean
      */
 
     @Override
@@ -124,19 +124,19 @@ public boolean createCourse(Course course) {
     /**
      *  Delete record from course table based on id(refers to course_id attribute).
      *
-     * @param id course id string
+     * @param cId course id string
      * @return true if course was deleted, false if otherwise
      */
 
     @Override
-    public boolean deleteCourseById(String id) {
+    public boolean deleteCourseById(String cId) {
         try {
             Connection conn = ConnectionUtil.createConnection();
             String query = "delete from course where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, id);
+            ps.setString(1, cId);
             ps.execute();
-            Logger.log("Deleted " + id, LogLevel.INFO);
+            Logger.log("Deleted " + cId, LogLevel.INFO);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -146,16 +146,16 @@ public boolean createCourse(Course course) {
     }
 
     @Override
-    public boolean decrementCapacity(String id) {
+    public boolean decrementCapacity(String cId) {
         try {
             Connection conn = ConnectionUtil.createConnection();
-            Course c = this.readCourseById(id);
+            Course c = this.readCourseById(cId);
             int capacity = c.getCapacity();
             capacity = capacity - 1;
             String query = "update course set capacity = ? where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, capacity);
-            ps.setString(2, id.toUpperCase(Locale.ROOT));
+            ps.setString(2, cId.toUpperCase(Locale.ROOT));
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
