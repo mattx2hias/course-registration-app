@@ -1,11 +1,9 @@
 package dev.matthias.data;
 
 import dev.matthias.entities.Course;
-import dev.matthias.services.FacultyServiceImpl;
 import dev.matthias.utilities.ConnectionUtil;
 import dev.matthias.utilities.LogLevel;
 import dev.matthias.utilities.Logger;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,7 +46,6 @@ public boolean createCourse(Course course) {
                 Logger.log("Failed to create course " + course.getId(), LogLevel.WARNING);
                 return false;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
@@ -146,22 +143,21 @@ public boolean createCourse(Course course) {
     }
 
     @Override
-    public boolean decrementCapacity(String cId) {
+    public void updateCapacity(String cId, int num) {
         try {
             Connection conn = ConnectionUtil.createConnection();
             Course c = this.readCourseById(cId);
             int capacity = c.getCapacity();
-            capacity = capacity - 1;
+            capacity += num;
             String query = "update course set capacity = ? where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, capacity);
             ps.setString(2, cId.toUpperCase(Locale.ROOT));
             ps.executeUpdate();
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
-            return false;
         }
     }
+
 }

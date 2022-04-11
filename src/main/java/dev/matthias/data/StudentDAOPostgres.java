@@ -2,9 +2,9 @@ package dev.matthias.data;
 
 import dev.matthias.entities.Student;
 import dev.matthias.utilities.*;
-
 import dev.matthias.utilities.List;
 import java.sql.*;
+import java.util.Locale;
 
 public class StudentDAOPostgres implements StudentDAO{
 
@@ -58,7 +58,7 @@ public class StudentDAOPostgres implements StudentDAO{
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, sId);
-            ps.setString(2, cId);
+            ps.setString(2, cId.toUpperCase(Locale.ROOT));
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -71,11 +71,11 @@ public class StudentDAOPostgres implements StudentDAO{
     @Override
     public boolean cancelRegistration(int sId, String cId) {
         try {
-            String query = "delete from student_course where student_id = ? and course_id = ?;";
+            String query = "delete from student_course where student_id = ? and course_id = ?";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, sId);
-            ps.setString(2, cId);
+            ps.setString(2, cId.toUpperCase(Locale.ROOT));
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -122,7 +122,7 @@ public class StudentDAOPostgres implements StudentDAO{
     }
 
     @Override
-    public boolean checkIfEmailExists(String email) {
+    public boolean emailExists(String email) {
         try {
             String query = "select count(*) from student where email = ?";
             Connection conn = ConnectionUtil.createConnection();
@@ -131,6 +131,32 @@ public class StudentDAOPostgres implements StudentDAO{
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt("count") > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.log(e.getMessage(), LogLevel.ERROR);
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param sId
+     * @param cId
+     * @return true if student is enrolled in course
+     */
+    @Override
+    public boolean isEnrolled(int sId, String cId) {
+        try{
+            String query = "select count(*) from student_course where student_id = ? and course_id = ?";
+            Connection conn = ConnectionUtil.createConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, sId);
+            ps.setString(2, cId.toUpperCase(Locale.ROOT));
+            ResultSet rs = ps.executeQuery();
+            int i = 0;
+            if(rs.next()) {
+                return rs.getInt("count") > 0;
+            } else return false;
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);

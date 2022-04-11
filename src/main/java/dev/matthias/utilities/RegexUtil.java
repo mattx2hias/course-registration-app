@@ -18,4 +18,17 @@ public class RegexUtil {
         LocalDate d = LocalDate.parse(date, dtf);
         return d.toEpochDay();
     }
+
+    /**
+     * -1 password is less than 8 characters
+     * 0 password is satisfactory
+     * 1 password has no special characters
+     * @param pass
+     * @return
+     */
+    public static byte validatePassword(String pass) {
+        if(pass.length() < 8) return -1;
+        if(!pass.contains("[?!@#$%^&*~-_=+`]")) return 1; //fix
+        return 0;
+    }
 }

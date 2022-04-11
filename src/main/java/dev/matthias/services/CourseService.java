@@ -1,10 +1,7 @@
 package dev.matthias.services;
 
-import dev.matthias.entities.Course;
-
 public interface CourseService {
+    boolean atCapacity(String cId);
 
-    boolean registerForCourse(Course course);
-
-
+    boolean afterStartDate(String cId);
 }

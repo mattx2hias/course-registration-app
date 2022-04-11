@@ -16,15 +16,36 @@ public class FacultyServiceImpl implements FacultyService{
         this.cDao = new CourseDAOPostgres();
     }
 
-
+    /**
+     * -1 error with course dao create course
+     * 0 successfully created course
+     * 1 course cannot start before current time
+     * 2 end date cannot be less than start date
+     * @param c course
+     * @return digit denoting status of faculty creating new course
+     */
     @Override
-    public boolean createNewCourse(Course c) {
-        return this.cDao.createCourse(c);
+    public byte createNewCourse(Course c) {
+        //if(this.cService.afterStartDate(c.getId())) return 1;
+        if(c.getEnd() < c.getStart()) return 2;
+        if(this.cDao.createCourse(c)) return 0;
+            else return -1;
     }
 
+    /**
+     * -1 error with course dao update course
+     * 0 successfully created course
+     * 1 course cannot start before current time
+     * 2 end date cannot be less than start date
+     * @param c course
+     * @return digit denoting status of faculty updating a course
+     */
     @Override
-    public boolean updateCourseDetails(Course c) {
-        return this.cDao.updateCourse(c);
+    public byte updateCourseDetails(Course c) {
+        //if(this.cService.afterStartDate(c.getId())) return 1;
+        if(c.getEnd() < c.getStart()) return 2;
+        if(this.cDao.updateCourse(c)) return 0;
+         else return -1;
     }
 
     @Override

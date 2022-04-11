@@ -11,7 +11,12 @@ public class StudentServiceTests {
 
     @Test
     void registerForCourse() {
-        Assertions.assertTrue(s.registerForCourse(7290, "BOAT101"));
+        Assertions.assertEquals(0, s.registerForCourse(7290, "jel101"));
+    }
+
+    @Test
+    void cancelRegistration() {
+        Assertions.assertEquals(0, s.cancelRegistration(7290, "jel101"));
     }
 
     @Test

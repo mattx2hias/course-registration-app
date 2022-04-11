@@ -13,19 +13,11 @@ public class CourseDaoTests {
     static Course testCourse = new Course("SPG123", "Spongebob", "An in-depth look at the metaphysics of the coveted children's show.",
             LocalDate.of(2022, 8, 15), LocalDate.of(2022, 12, 14), 1,90);
 
-    /***************************
-     createCourse TESTS
-     ***************************/
-
     @Test
     void createCourseTest() { courseDAO.createCourse(testCourse); }
 
     @Test
     void createCourseMissingAttributesTest() {}
-
-    /***************************
-     readCourseId TESTS
-     ***************************/
 
     @Test
     void readCourseByIdTest() {
@@ -45,22 +37,13 @@ public class CourseDaoTests {
         Assertions.assertEquals("Spongebob", addedCourse.getName());
     }
 
-    /***************************
-     updateCourse TESTS
-     ***************************/
-
     @Test
     void updateCourseTest() {
-        Course testCourse = new Course("SPG123", "Spongebob", "An in-depth look at the metaphysics of the coveted children's show.",
-                LocalDate.of(2022, 8, 15), LocalDate.of(2022, 12, 14), 99,90);
-        //Course updatedCourse = courseDAO.updateCourse(testCourse);
+        Course testCourse = courseDAO.readCourseById("HOW111");
+        testCourse.setCapacity(1);
 
         Assertions.assertTrue(courseDAO.updateCourse(testCourse));
     }
-
-    /***************************
-     deleteCourseById TESTS
-     ***************************/
 
     @Test
     void deleteCourseTest() { Assertions.assertTrue(courseDAO.deleteCourseById(testCourse.getId())); }
@@ -69,4 +52,6 @@ public class CourseDaoTests {
     void deleteCourseFailedTest() {
         Assertions.assertTrue(courseDAO.deleteCourseById(testCourse.getId()));
     }
+
+
 }

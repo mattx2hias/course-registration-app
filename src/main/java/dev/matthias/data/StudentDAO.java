@@ -7,16 +7,18 @@ public interface StudentDAO {
 
     boolean registerNewAccount(Student student);
 
-    boolean registerForCourse(int studentID, String courseId);
+    boolean registerForCourse(int sID, String cId);
 
-    List<String> readEnrolledCourses(int studentId);
+    List<String> readEnrolledCourses(int sId);
 
-    boolean cancelRegistration(int studentId, String courseId);
+    boolean cancelRegistration(int sId, String cId);
 
     List<String> readCourseCatalog();
 
     boolean checkIfIdExists(int sId);
 
-    boolean checkIfEmailExists(String email);
+    boolean emailExists(String email);
+
+    boolean isEnrolled(int sId, String cId);
 
 }

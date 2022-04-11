@@ -4,6 +4,7 @@ import dev.matthias.data.CourseDAO;
 import dev.matthias.data.CourseDAOPostgres;
 import dev.matthias.data.StudentDAO;
 import dev.matthias.data.StudentDAOPostgres;
+import dev.matthias.entities.Course;
 import dev.matthias.entities.Student;
 
 import dev.matthias.utilities.List;
@@ -13,20 +14,32 @@ public class StudentServiceImpl implements StudentService{
 
     StudentDAO sDao;
     CourseDAO cDao;
+    CourseService cService = new CourseServiceImpl();
 
     public StudentServiceImpl() {
         this.sDao = new StudentDAOPostgres();
         this.cDao = new CourseDAOPostgres();
     }
 
+    /**
+     * -1 error with the student dao register course method<br/>
+     * 0 course registered successfully<br/>
+     * 1 student is already enrolled<br/>
+     * 2 start date for course has already past<br/>
+     * 3 if course has reached capacity<br/>
+     * @param sId student id int
+     * @param cId course id string
+     * @return digit that denotes status of registering for a course
+     */
     @Override
-    public boolean registerForCourse(int id, String cId) {
-        //check if prereqs are satisfied
-        //check if already enrolled
-        if(this.sDao.registerForCourse(id, cId)) {
-            this.cDao.decrementCapacity(cId);
-            return true;
-        } else return false;
+    public byte registerForCourse(int sId, String cId) {
+        if(this.sDao.isEnrolled(sId, cId)) return 1;
+        if(this.cService.afterStartDate(cId)) return 2;
+        if(this.cService.atCapacity(cId)) return 3;
+        if(this.sDao.registerForCourse(sId, cId)) {
+            this.cDao.updateCapacity(cId, -1);
+            return 0;
+        } else return -1;
     }
 
     @Override
@@ -34,10 +47,22 @@ public class StudentServiceImpl implements StudentService{
         return this.sDao.readCourseCatalog();
     }
 
+    /**
+     * -1 error with student dao cancel registration method<br/>
+     * 0 record based on course id removed from student_course table<br/>
+     * 1 student is not enrolled<br/>
+     * @param sId student id int
+     * @param cId course id string
+     * @return digit that denotes status of withdrawing from a course
+     */
     @Override
-    public boolean cancelRegistration(Student s, String cId) {
-        //check if student is enrolled in requested course
-        return this.sDao.cancelRegistration(s.getStudentID(), cId);
+    public byte cancelRegistration(int sId, String cId) {
+        if(!this.sDao.isEnrolled(sId, cId)) return 1;
+        if(this.sDao.cancelRegistration(sId, cId)) {
+            this.cDao.updateCapacity(cId, 1);
+            return 0;
+        }
+        return -1;
     }
 
     @Override
@@ -45,9 +70,18 @@ public class StudentServiceImpl implements StudentService{
         return this.sDao.readEnrolledCourses(cId);
     }
 
+    /**
+     * -1 error with student dao register new account method<br/>
+     * 0 inserted new student record into student table<br/>
+     * 1 student with email address already exists<br/>
+     * @param student student object tied to new account
+     * @return digit that denotes status of registering a new student account
+     */
     @Override
-    public boolean registerNewAccount(Student student) {
-        return this.sDao.registerNewAccount(student);
+    public byte registerNewAccount(Student student) {
+        if(this.sDao.emailExists(student.getEmail())) return 1;
+        if(this.sDao.registerNewAccount(student)) return 0;
+            else return -1;
     }
 
     @Override

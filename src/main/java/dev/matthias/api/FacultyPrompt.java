@@ -10,6 +10,7 @@ import dev.matthias.utilities.RegexUtil;
 
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class FacultyPrompt {
@@ -49,7 +50,7 @@ public class FacultyPrompt {
         Scanner s = new Scanner(System.in).useDelimiter("\n");
 
         System.out.print("Enter course id: ");
-        newCourse.setId(s.next());
+        newCourse.setId(s.next().toUpperCase(Locale.ROOT));
         System.out.print("Enter course name: ");
         newCourse.setName(s.next());
         System.out.print("Enter course description: ");
@@ -77,13 +78,18 @@ public class FacultyPrompt {
         try (Scanner s = new Scanner(System.in).useDelimiter("\n")) {
             int selection = 0;
             System.out.print("Enter course ID to edit: ");
-            String courseId = s.next();
+            String courseId = s.next().toUpperCase(Locale.ROOT);
             Course updatedCourse = cDao.readCourseById(courseId);
+            if(updatedCourse == null) {
+                System.out.println("Course not found.");
+                this.mainMenu();
+                return;
+            }
             System.out.println("######___Editing___######");
             System.out.println(updatedCourse.toString());
             System.out.println("######___Editing___######");
             System.out.println( "1->Course ID  | 2->Course Name | 3->Course Description\n" +
-                                "4->Start Date | 5->End Date    | 6->Capacity");
+                                "4->Start Date | 5->End Date | 6->Cancel");
             selection = s.nextInt();
             switch (selection) {
                 case 1:
@@ -106,9 +112,22 @@ public class FacultyPrompt {
                     System.out.print("Enter end date[DD/MM/YYYY]: ");
                     updatedCourse.setEnd(RegexUtil.getUnixEpochTime(s.next()));
                     break;
+                default: break;
             }
-            this.service.updateCourseDetails(updatedCourse);
-            System.out.println(updatedCourse.getId() + " Updated.");
+            byte statusCode = this.service.updateCourseDetails(updatedCourse);
+            switch(statusCode) {
+                case -2: break;
+                case -1:
+                    System.out.println();
+                    break;
+                case 0:
+                    System.out.println(updatedCourse.getId() + " Updated.");
+                    break;
+                case 1: break;
+                case 2:
+                    System.out.println("End date cannot be before start date.");
+                    break;
+            }
             this.mainMenu();
         } catch (InputMismatchException e) {
             e.printStackTrace();
@@ -121,7 +140,7 @@ public class FacultyPrompt {
         Scanner s = new Scanner(System.in).useDelimiter("\n");
         try {
             System.out.print("Enter course ID to delete: ");
-            String courseId = s.next();
+            String courseId = s.next().toUpperCase(Locale.ROOT);
             Course courseToDelete = cDao.readCourseById(courseId);
             System.out.print("Delete " + courseToDelete.getId() + "?[Y or N]: ");
             String choice = s.next();

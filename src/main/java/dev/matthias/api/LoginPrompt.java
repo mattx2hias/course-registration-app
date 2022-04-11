@@ -3,7 +3,6 @@ package dev.matthias.api;
 import dev.matthias.entities.Faculty;
 import dev.matthias.entities.Student;
 import dev.matthias.utilities.LoginUtil;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -15,47 +14,68 @@ public class LoginPrompt {
                             "==================================\n" +
                             "1->Student | 2->Faculty | 3->Quit");
         int selection;
-        String email = null;
-        String password = null;
         try (Scanner s = new Scanner(System.in).useDelimiter("\n")) {
             selection = s.nextInt();
             if (selection == 1) {
-                System.out.println( "===============================================\n" +
-                                    "1->Existing Student | 2->New Student | 3->Quit");
-                selection = s.nextInt();
-                if (selection == 2) {
-                    Student newStudent = new Student();
-                    StudentPrompt sp = new StudentPrompt(newStudent);
-                    sp.registerNewAccountPrompt();
-                    selection = 1;
-                } else if (selection == 3) return;
-            }
-            if (selection == 1 || selection == 2) {
+                LoginPrompt.studentLogin();
+            } else if (selection == 2) {
+                LoginPrompt.facultyLogin();
+            } else if (selection == 3) return;
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void studentLogin() {
+        System.out.println("===============================================\n" +
+                            "1->Existing Student | 2->New Student | 3->Quit");
+        Student newStudent = new Student();
+        StudentPrompt sp = new StudentPrompt(newStudent);
+        String email = null;
+        String password = null;
+        int selection;
+        Scanner s = new Scanner(System.in).useDelimiter("\n");
+        try {
+            selection = s.nextInt();
+            if(selection == 1) {
                 System.out.print("Enter email: ");
                 email = s.next(); //check for valid email
                 System.out.print("Enter password: ");
                 password = s.next();
-            }
-
-            // status codes for incorrect email, password or account doesn't exist
-            if (selection == 1) {
                 Student stud = LoginUtil.sLogin(email, password);
-                if (stud == null) {
+                sp = new StudentPrompt(stud);
+                if(stud == null){
+                    System.out.println("Invalid email or password.");
                     LoginPrompt.login();
-                } else System.out.println("\nWelcome, " + stud.getFirstName());
-                StudentPrompt sp = new StudentPrompt(stud);
-                sp.mainMenu();
-            } else if (selection == 2) {
-                Faculty fac = LoginUtil.fLogin(email, password);
-                if (fac == null) {
-                    LoginPrompt.login();
-                } else System.out.println("\nWelcome, " + fac.getFirstName());
-                FacultyPrompt fp = new FacultyPrompt(fac);
-                fp.mainMenu();
-            } else if (selection == 3) {
-            } else {
-                System.out.println("Please enter 1, 2, or 3.");
+                } else {
+                    System.out.println("\nWelcome, " + stud.getFirstName());
+                    sp.mainMenu();
+                }
+
+            }else if(selection == 2) {
+                sp.registerNewAccountPrompt();
+            } else LoginPrompt.login();
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void facultyLogin() {
+        Scanner s = new Scanner(System.in).useDelimiter("\n");
+        String email = null;
+        String password = null;
+        try {
+            System.out.print("Enter email: ");
+            email = s.next(); //check for valid email
+            System.out.print("Enter password: ");
+            password = s.next();
+            Faculty fac = LoginUtil.fLogin(email, password);
+            FacultyPrompt fp = new FacultyPrompt(fac);
+            if(fac == null){
+                System.out.println("Invalid email or password.");
                 LoginPrompt.login();
+            } else {
+                System.out.println("\nWelcome, " + fac.getFirstName());
+                fp.mainMenu();
             }
         } catch (InputMismatchException e) {
             e.printStackTrace();

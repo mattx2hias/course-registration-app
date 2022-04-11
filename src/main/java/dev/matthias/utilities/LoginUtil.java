@@ -1,22 +1,13 @@
 package dev.matthias.utilities;
 
-import dev.matthias.data.FacultyDAO;
-import dev.matthias.data.FacultyDAOPostgres;
-import dev.matthias.data.StudentDAO;
-import dev.matthias.data.StudentDAOPostgres;
 import dev.matthias.entities.Faculty;
 import dev.matthias.entities.Student;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class LoginUtil {
-
-    static StudentDAO sDao = new StudentDAOPostgres();
-    static FacultyDAO fDao = new FacultyDAOPostgres();
-
 
     public static Student sLogin(String email, String password) {
         try {
@@ -35,7 +26,6 @@ public class LoginUtil {
             stud.setMajor(rs.getString("major"));
             return stud;
         } catch (SQLException e) {
-            System.out.println("Wrong email or password.");
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
         }
@@ -57,7 +47,6 @@ public class LoginUtil {
             fac.setDepartment(rs.getString("department"));
             return fac;
         } catch (SQLException e) {
-            System.out.println("Wrong email or password.");
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
         }

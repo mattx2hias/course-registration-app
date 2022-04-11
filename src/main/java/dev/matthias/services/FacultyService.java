@@ -4,9 +4,9 @@ import dev.matthias.entities.Course;
 
 public interface FacultyService {
 
-    boolean createNewCourse(Course c);
+    byte createNewCourse(Course c);
 
-    boolean updateCourseDetails(Course c);
+    byte updateCourseDetails(Course c);
 
     boolean deleteCourse(String cId);
 }

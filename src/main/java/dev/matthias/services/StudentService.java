@@ -6,15 +6,15 @@ import dev.matthias.utilities.List;
 
 public interface StudentService {
 
-    boolean registerForCourse(int id, String courseId);
+    byte registerForCourse(int id, String cId);
 
     List<String> viewCourseCatalog();
 
-    boolean cancelRegistration(Student s, String courseId);
+    byte cancelRegistration(int sId, String cId);
 
-    List<String> viewEnrolledCourses(int id);
+    List<String> viewEnrolledCourses(int sId);
 
-    boolean registerNewAccount(Student student);
+    byte registerNewAccount(Student student);
 
     int generateNewStudentId();
 }
