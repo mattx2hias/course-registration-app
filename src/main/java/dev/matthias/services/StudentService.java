@@ -1,9 +1,8 @@
 package dev.matthias.services;
 
-import dev.matthias.entities.Course;
 import dev.matthias.entities.Student;
 
-import java.util.List;
+import dev.matthias.utilities.List;
 
 public interface StudentService {
 
@@ -13,7 +12,7 @@ public interface StudentService {
 
     boolean cancelRegistration(Student s, String courseId);
 
-    String[] viewEnrolledCourses(int id);
+    List<String> viewEnrolledCourses(int id);
 
     boolean registerNewAccount(Student student);
 

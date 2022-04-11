@@ -13,8 +13,7 @@ public class StudentDaoTests {
 
     @Test
     void readEnrolledCoursesTest() {
-        for(String s : sDao.readEnrolledCourses(7290)) System.out.println(s);
-        //Assertions.assertNotNull(sDao.readEnrolledCourses(7290));
+        Assertions.assertEquals("ECON201", sDao.readEnrolledCourses(7290).get(0));
     }
 
     @Test

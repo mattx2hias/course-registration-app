@@ -3,25 +3,22 @@ package dev.matthias.data;
 import dev.matthias.entities.Student;
 import dev.matthias.utilities.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import dev.matthias.utilities.List;
 import java.sql.*;
 
 public class StudentDAOPostgres implements StudentDAO{
 
     @Override
-    public String[] readEnrolledCourses(int sId) {
+    public List<String> readEnrolledCourses(int sId) {
         try{
-            String[] courseList = new String[10];
+            List<String> courseList = new ArrayList<>();
             String query = "select course_id from student_course where student_id = ?";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, sId);
             ResultSet rs = ps.executeQuery();
-            int i = 0;
             while(rs.next()) {
-                courseList[i] = rs.getString("course_id");
-                i++;
+                courseList.append(rs.getString("course_id"));
             }
             return courseList;
         } catch (SQLException e) {
@@ -97,7 +94,8 @@ public class StudentDAOPostgres implements StudentDAO{
             PreparedStatement ps = conn.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
             int i = 0;
-            while(rs.next()) ids.add(i++, rs.getString("course_id"));
+            while(rs.next())
+                ids.add(i++, rs.getString("course_id"));
             return ids;
         } catch (SQLException e) {
             e.printStackTrace();

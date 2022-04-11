@@ -6,7 +6,7 @@ import dev.matthias.data.StudentDAO;
 import dev.matthias.data.StudentDAOPostgres;
 import dev.matthias.entities.Student;
 
-import java.util.List;
+import dev.matthias.utilities.List;
 import java.util.Random;
 
 public class StudentServiceImpl implements StudentService{
@@ -41,7 +41,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public String[] viewEnrolledCourses(int cId) {
+    public List<String> viewEnrolledCourses(int cId) {
         return this.sDao.readEnrolledCourses(cId);
     }
 

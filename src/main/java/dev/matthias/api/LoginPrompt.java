@@ -28,7 +28,7 @@ public class LoginPrompt {
                     StudentPrompt sp = new StudentPrompt(newStudent);
                     sp.registerNewAccountPrompt();
                     selection = 1;
-                } else return;
+                } else if (selection == 3) return;
             }
             if (selection == 1 || selection == 2) {
                 System.out.print("Enter email: ");

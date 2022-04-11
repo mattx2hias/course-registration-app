@@ -16,8 +16,12 @@ public class StudentServiceTests {
 
     @Test
     void viewEnrolledCoursesTest() {
-        String[] test = s.viewEnrolledCourses(7290);
-        for(String s : test) System.out.println(s);
-        //Assertions.assertNotEquals(0, test[0]);
+        Assertions.assertEquals("ECON201", s.viewEnrolledCourses(7290).get(0));
+    }
+
+    @Test
+    void generateNewStudentId() {
+        int rand = s.generateNewStudentId();
+        Assertions.assertTrue(rand >= 1000 && rand <= 9999);
     }
 }

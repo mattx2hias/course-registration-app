@@ -1,7 +1,7 @@
 package dev.matthias.data;
 
 import dev.matthias.entities.Student;
-import java.util.List;
+import dev.matthias.utilities.List;
 
 public interface StudentDAO {
 
@@ -9,7 +9,7 @@ public interface StudentDAO {
 
     boolean registerForCourse(int studentID, String courseId);
 
-    String[] readEnrolledCourses(int studentId);
+    List<String> readEnrolledCourses(int studentId);
 
     boolean cancelRegistration(int studentId, String courseId);
 

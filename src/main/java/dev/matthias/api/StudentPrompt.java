@@ -2,17 +2,14 @@ package dev.matthias.api;
 
 import dev.matthias.data.CourseDAO;
 import dev.matthias.data.CourseDAOPostgres;
-import dev.matthias.data.StudentDAO;
-import dev.matthias.data.StudentDAOPostgres;
 import dev.matthias.entities.Student;
 import dev.matthias.services.StudentService;
 import dev.matthias.services.StudentServiceImpl;
 import dev.matthias.utilities.LogLevel;
 import dev.matthias.utilities.Logger;
 import dev.matthias.utilities.RegexUtil;
-
 import java.util.InputMismatchException;
-import java.util.List;
+import dev.matthias.utilities.List;
 import java.util.Scanner;
 
 public class StudentPrompt {
@@ -61,9 +58,8 @@ public class StudentPrompt {
     private void viewCourseCatalogPrompt() {
         System.out.println( "================================");
         List<String> catalog = this.service.viewCourseCatalog();
-        for (String s : catalog) {
-            System.out.println(this.cDao.readCourseById(s).toString());
-        }
+        for(int i = 0; i < catalog.size(); i++)
+            System.out.println(this.cDao.readCourseById(catalog.get(i)).toString());
         System.out.println("================================");
         System.out.println("1. Go Back");
         Scanner s = new Scanner(System.in);
@@ -72,11 +68,9 @@ public class StudentPrompt {
 
     private void viewEnrolledCoursesPrompt() {
         System.out.println("============Enrolled In============");
-        for(String s : this.service.viewEnrolledCourses(this.student.getStudentID())) {
-            if(s != null) {
-                System.out.println(this.cDao.readCourseById(s).toString());
-            }
-        }
+        List<String> enrolledList = this.service.viewEnrolledCourses(this.student.getStudentID());
+        for(int i = 0; i < enrolledList.size(); i++)
+            System.out.println(this.cDao.readCourseById(enrolledList.get(i)).toString());
         System.out.println("===================================");
         System.out.println("1. Go Back");
         Scanner s = new Scanner(System.in);
