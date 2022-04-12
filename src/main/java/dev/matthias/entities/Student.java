@@ -6,14 +6,11 @@ public class Student {
     private String lastName;
     private String email;
     private String password;
-    private String year;
-    private String major;
 
-    public Student(int studentID, String firstName, String lastName, String year) {
+    public Student(int studentID, String firstName, String lastName) {
         this.studentID = studentID;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.year = year;
     }
 
     public Student() {}
@@ -40,22 +37,6 @@ public class Student {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public String getMajor() {
-        return major;
-    }
-
-    public void setMajor(String major) {
-        this.major = major;
     }
 
     public String getEmail() {

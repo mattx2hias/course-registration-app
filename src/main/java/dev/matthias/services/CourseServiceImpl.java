@@ -19,7 +19,7 @@ public class CourseServiceImpl implements CourseService{
      */
     @Override
     public boolean atCapacity(String cId) {
-        return this.cDao.readCourseById(cId).getCapacity() == 0;
+        return (this.cDao.readCourseById(cId).getCapacity() == 0);
     }
 
     /**
@@ -30,7 +30,7 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public boolean afterStartDate(String cId) {
         Course dummy = this.cDao.readCourseById(cId);
-        long currentUnixEpoch = System.currentTimeMillis();
-        return dummy.getStart() > currentUnixEpoch;
+        long currentUnixEpoch = (System.currentTimeMillis()/1000);
+        return dummy.getStart() < currentUnixEpoch;
     }
 }

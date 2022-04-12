@@ -4,6 +4,7 @@ import dev.matthias.data.CourseDAO;
 import dev.matthias.data.CourseDAOPostgres;
 import dev.matthias.data.StudentDAO;
 import dev.matthias.data.StudentDAOPostgres;
+import dev.matthias.entities.Course;
 import dev.matthias.entities.Student;
 import dev.matthias.services.StudentService;
 import dev.matthias.services.StudentServiceImpl;
@@ -51,24 +52,51 @@ public class StudentPrompt {
         }
     }
 
-    private void viewCourseCatalogPrompt() {
-        System.out.println( "================================");
+    public void viewCourseCatalogPrompt() {
+        System.out.println( "===========================================================================\n" +
+                            "  ID    |              Name              |       Start-End       | Capacity");
         List<String> catalog = this.service.viewCourseCatalog();
         for(int i = 0; i < catalog.size(); i++)
             System.out.println(this.cDao.readCourseById(catalog.get(i)).toString());
-        System.out.println("================================");
-        System.out.println("1. Go Back");
+        System.out.println("===========================================================================\n"+
+                "1->Go Back   2->View course details");
         Scanner s = new Scanner(System.in);
-        if(s.nextInt() == 1) this.mainMenu();
+        try {
+            int selection = s.nextInt();
+            if(selection == 1) this.mainMenu();
+                else if(selection == 2) this.viewCourseDetails();
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void viewCourseDetails() {
+        System.out.print("Enter course id: ");
+        Scanner s = new Scanner(System.in).useDelimiter("\n");
+        try{
+            String cId = s.next().toUpperCase(Locale.ROOT);
+            Course c = this.cDao.readCourseById(cId);
+            System.out.println(c.toString());
+            System.out.println(c.getDescription()+
+                    "\n=========================================\n"+
+                    "1->Course Catalog   2->Main Menu");
+            int selection = s.nextInt();
+            if(selection == 1) this.viewCourseCatalogPrompt();
+                else if(selection == 2) this.mainMenu();
+        } catch (InputMismatchException e) {
+            e.printStackTrace();
+        }
     }
 
     private void viewEnrolledCoursesPrompt() {
-        System.out.println("============Enrolled In============");
+        System.out.println( "================================Enrolled In================================\n" +
+                            "===========================================================================\n" +
+                            "  ID    |              Name              |       Start-End       | Capacity");
         List<String> enrolledList = this.service.viewEnrolledCourses(this.student.getStudentID());
         for(int i = 0; i < enrolledList.size(); i++)
             System.out.println(this.cDao.readCourseById(enrolledList.get(i)).toString());
-        System.out.println("===================================");
-        System.out.println("1. Go Back");
+        System.out.println("===========================================================================");
+        System.out.println("1->Go Back");
         Scanner s = new Scanner(System.in);
         if(s.nextInt() == 1) this.mainMenu();
     }
@@ -80,6 +108,7 @@ public class StudentPrompt {
             String id = s.next().toUpperCase(Locale.ROOT);
             byte statusCode = this.service.cancelRegistration(this.student.getStudentID(), id);
             switch(statusCode) {
+                case -2: System.out.println("Course doesn't exist."); break;
                 case -1: System.out.println("Database error."); break;
                 case  0: System.out.println("Unregistered from " + id + "."); break;
                 case  1: System.out.println("Not enrolled in " + id + "."); break;
@@ -97,6 +126,7 @@ public class StudentPrompt {
             String cId = s.next().toUpperCase(Locale.ROOT);
             byte statusCode = this.service.registerForCourse(this.student.getStudentID(), cId);
             switch(statusCode) {
+                case -2: System.out.println("Course doesn't exist."); break;
                 case -1: System.out.println("Database error."); break;
                 case  0: System.out.println("Successfully registered for " + cId + "."); break;
                 case  1: System.out.println("Already enrolled in " + cId + "."); break;
@@ -110,11 +140,17 @@ public class StudentPrompt {
     }
 
     void registerNewAccountPrompt() {
+        System.out.println("==========New Student Account==========");
         Scanner s = new Scanner(System.in).useDelimiter("\n");
         try {
             System.out.print("Enter email: ");
-            this.student.setEmail(s.next());
-            //validate email
+            String email = s.next();
+            if(!RegexUtil.validateEmail(email)) {
+                System.out.println("Invalid email format. Must be @uow.edu email.");
+                LoginPrompt.login();
+            }else {
+                this.student.setEmail(email);
+            }
             System.out.print("Enter password: ");
             String password = s.next();
             byte statusCode = RegexUtil.validatePassword(password);
@@ -122,7 +158,7 @@ public class StudentPrompt {
                 if(statusCode == -1){
                     System.out.println("Password has to be at least 8 characters.");
                 } else if(statusCode == 1) {
-                    System.out.println("Password has to have at least 1 special character(?!@#$%^&*~-_=+`).");
+                    System.out.println("Password has to have at least 1 special character(?!@#$%^&*~_=+`).");
                 }
                 System.out.print("Enter password: ");
                 password = s.next();
@@ -136,12 +172,12 @@ public class StudentPrompt {
             System.out.print("Last name: ");
             this.student.setLastName(s.next());
             //validate last name
-            this.student.setYear("Freshman");
-            System.out.println("==================\n"+this.student.toString()+"Confirm details[Y or N]: ");
+            System.out.println("=======================================\n"+
+                    this.student.toString()+"Confirm details[Y or N]: ");
             String confirm = s.next();
             while(!RegexUtil.yesOrNoInput(confirm)) {
                 System.out.println( "======================================================\n"+
-                                    "1->Email | 2->Password | 3->First Name | 4->Last Name | 5->Cancel");
+                                    "1->Email  2->Password  3->First Name  4->Last Name  5->Cancel");
                 switch(s.nextInt()) {
                     case 1:
                         System.out.print("Enter email: ");

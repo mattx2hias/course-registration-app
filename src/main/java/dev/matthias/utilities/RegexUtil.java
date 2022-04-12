@@ -1,6 +1,6 @@
 package dev.matthias.utilities;
 
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -16,7 +16,8 @@ public class RegexUtil {
     public static long getUnixEpochTime(String date) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.ENGLISH);
         LocalDate d = LocalDate.parse(date, dtf);
-        return d.toEpochDay();
+        ZoneId zoneId = ZoneId.systemDefault();
+        return d.atStartOfDay(zoneId).toEpochSecond();
     }
 
     /**
@@ -27,8 +28,14 @@ public class RegexUtil {
      * @return
      */
     public static byte validatePassword(String pass) {
+        Pattern passPattern = Pattern.compile("[?!@#$%^&*~_=+`]");
         if(pass.length() < 8) return -1;
-        if(!pass.contains("[?!@#$%^&*~-_=+`]")) return 1; //fix
-        return 0;
+        else if(!passPattern.matcher(pass).find()) return 1;
+            else return 0;
+    }
+
+    public static boolean validateEmail(String email) {
+        Pattern emailPattern = Pattern.compile("^(.+)@uow.edu");
+        return emailPattern.matcher(email).matches();
     }
 }

@@ -11,6 +11,4 @@ public interface CourseDAO {
     boolean updateCourse(Course course);
 
     boolean deleteCourseById(String id);
-
-    void updateCapacity(String id, int num);
 }

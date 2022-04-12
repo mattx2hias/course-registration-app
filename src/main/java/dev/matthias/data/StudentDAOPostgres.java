@@ -9,6 +9,27 @@ import java.util.Locale;
 public class StudentDAOPostgres implements StudentDAO{
 
     @Override
+    public Student readStudent(String email, String password) {
+        try {
+            String query = "select * from student where email = ? and password = ?";
+            Connection conn = ConnectionUtil.createConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            Student stud = new Student();
+            stud.setStudentID(rs.getInt("student_id"));
+            stud.setFirstName(rs.getString("first_name"));
+            stud.setLastName(rs.getString("last_name"));
+            return stud;
+        } catch (SQLException e) {
+            Logger.log(e.getMessage(), LogLevel.ERROR);
+            return null;
+        }
+    }
+
+    @Override
     public List<String> readEnrolledCourses(int sId) {
         try{
             List<String> courseList = new ArrayList<>();
@@ -31,7 +52,7 @@ public class StudentDAOPostgres implements StudentDAO{
     @Override
     public boolean registerNewAccount(Student stud) {
         try{
-            String query = "insert into student values (?, ?, ?, ?, ?, ?, ?);";
+            String query = "insert into student values (?, ?, ?, ?, ?);";
             Connection conn = ConnectionUtil.createConnection();
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, stud.getStudentID());
@@ -39,10 +60,12 @@ public class StudentDAOPostgres implements StudentDAO{
             ps.setString(3, stud.getLastName());
             ps.setString(4, stud.getEmail());
             ps.setString(5, stud.getPassword());
-            ps.setString(6, stud.getYear());
-            ps.setString(7, stud.getMajor());
-            ps.execute();
-            return true;
+            if(ps.executeUpdate() > 0) {
+                Logger.log("Created student " + stud.getStudentID(), LogLevel.INFO);
+                return true;
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
@@ -59,8 +82,12 @@ public class StudentDAOPostgres implements StudentDAO{
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, sId);
             ps.setString(2, cId.toUpperCase(Locale.ROOT));
-            ps.execute();
-            return true;
+            if(ps.executeUpdate() > 0) {
+                Logger.log(sId + " registered for " + cId, LogLevel.INFO);
+                return true;
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
@@ -76,8 +103,11 @@ public class StudentDAOPostgres implements StudentDAO{
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setInt(1, sId);
             ps.setString(2, cId.toUpperCase(Locale.ROOT));
-            ps.execute();
-            return true;
+            if(ps.executeUpdate() > 0) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
@@ -153,7 +183,6 @@ public class StudentDAOPostgres implements StudentDAO{
             ps.setInt(1, sId);
             ps.setString(2, cId.toUpperCase(Locale.ROOT));
             ResultSet rs = ps.executeQuery();
-            int i = 0;
             if(rs.next()) {
                 return rs.getInt("count") > 0;
             } else return false;

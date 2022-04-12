@@ -1,6 +1,12 @@
 package dev.matthias.data;
 
+import dev.matthias.entities.Faculty;
+
 public interface FacultyDAO {
 
-    boolean removeEnrolledStudents(String cId);
+    Faculty readFaculty(String email, String password);
+
+    boolean addFaculty(Faculty faculty);
+
+
 }

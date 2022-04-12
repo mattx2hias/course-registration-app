@@ -4,15 +4,17 @@ public class Faculty {
     private int fId;
     private String firstName;
     private String lastName;
-    private String department;
+    private String email;
+    private String password;
 
     public Faculty() {}
 
-    public Faculty(int fId, String firstName, String lastName, String department) {
+    public Faculty(int fId, String firstName, String lastName, String email, String password) {
         this.fId = fId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.department = department;
+        this.email = email;
+        this.password = password;
     }
 
     public int getfId() {
@@ -39,11 +41,11 @@ public class Faculty {
         this.lastName = lastName;
     }
 
-    public String getDepartment() {
-        return department;
+    public String getEmail() {
+        return email;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public String getPassword() {
+        return password;
     }
 }

@@ -48,14 +48,13 @@ public class FacultyPrompt {
     private void createCoursePrompt() {
         Course newCourse = new Course();
         Scanner s = new Scanner(System.in).useDelimiter("\n");
-
-        System.out.print("Enter course id: ");
-        newCourse.setId(s.next().toUpperCase(Locale.ROOT));
-        System.out.print("Enter course name: ");
-        newCourse.setName(s.next());
-        System.out.print("Enter course description: ");
-        newCourse.setDescription(s.next());
         try {
+            System.out.print("Enter course id: ");
+            newCourse.setId(s.next().toUpperCase(Locale.ROOT));
+            System.out.print("Enter course name: ");
+            newCourse.setName(s.next());
+            System.out.print("Enter course description: ");
+            newCourse.setDescription(s.next());
             System.out.print("Enter start date[DD/MM/YYYY]: ");
             newCourse.setStart(RegexUtil.getUnixEpochTime(s.next()));
             System.out.print("Enter end date[DD/MM/YYYY]: ");
@@ -74,8 +73,8 @@ public class FacultyPrompt {
     }
 
     private void updateCoursePrompt() {
-
-        try (Scanner s = new Scanner(System.in).useDelimiter("\n")) {
+        Scanner s = new Scanner(System.in).useDelimiter("\n");
+        try {
             int selection = 0;
             System.out.print("Enter course ID to edit: ");
             String courseId = s.next().toUpperCase(Locale.ROOT);
@@ -85,11 +84,9 @@ public class FacultyPrompt {
                 this.mainMenu();
                 return;
             }
-            System.out.println("######___Editing___######");
-            System.out.println(updatedCourse.toString());
-            System.out.println("######___Editing___######");
-            System.out.println( "1->Course ID  | 2->Course Name | 3->Course Description\n" +
-                                "4->Start Date | 5->End Date | 6->Cancel");
+            System.out.println( "======================Editing======================\n"+ updatedCourse);
+            System.out.println( "1->Course ID   2->Course Name  3->Course Description\n" +
+                                "4->Start Date  5->End Date     6->Cancel");
             selection = s.nextInt();
             switch (selection) {
                 case 1:
@@ -136,7 +133,7 @@ public class FacultyPrompt {
     }
 
     private void deleteCoursePrompt() {
-        System.out.println("######___Delete Course___######");
+        System.out.println("==========Delete Course==========");
         Scanner s = new Scanner(System.in).useDelimiter("\n");
         try {
             System.out.print("Enter course ID to delete: ");
@@ -149,11 +146,10 @@ public class FacultyPrompt {
                     else System.out.println("Course deletion failed.");
                 this.mainMenu();
             }
-            // add password check for confirmation
         } catch(InputMismatchException e) {
             e.printStackTrace();
             System.out.println("Invalid input.");
             this.mainMenu();
-        } finally { s.close(); }
+        }
     }
 }

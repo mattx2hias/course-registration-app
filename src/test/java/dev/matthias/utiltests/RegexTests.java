@@ -13,4 +13,8 @@ public class RegexTests {
         Assertions.assertTrue(RegexUtil.yesOrNoInput("yEs"));
     }
 
+    @Test
+    void getUnixEpochTime() {
+        System.out.println(RegexUtil.getUnixEpochTime("01/05/2022"));
+    }
 }

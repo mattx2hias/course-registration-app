@@ -1,6 +1,10 @@
 package dev.matthias.entities;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class Course {
@@ -9,18 +13,17 @@ public class Course {
     private String description;
     private long start;
     private long end;
-    private int fId;
     private int capacity;
 
     public Course() {}
 
-    public Course(String id, String name, String description, LocalDate startDate, LocalDate endDate, int fId, int capacity) {
+    public Course(String id, String name, String description, LocalDate startDate, LocalDate endDate, int capacity) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.start = startDate.toEpochDay();
-        this.end = endDate.toEpochDay();
-        this.fId = fId;
+        ZoneId zoneId = ZoneId.systemDefault();
+        this.start = startDate.atStartOfDay(zoneId).toEpochSecond();
+        this.end = endDate.atStartOfDay(zoneId).toEpochSecond();
         this.capacity = capacity;
     }
 
@@ -52,6 +55,12 @@ public class Course {
         return start;
     }
 
+    public String getFormattedDate(long startOrEnd) {
+        LocalDateTime ltd = Instant.ofEpochSecond(startOrEnd).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M/d/yyyy");
+        return ltd.format(dtf);
+    }
+
     public void setStart(long start) {
         this.start = start;
     }
@@ -72,16 +81,28 @@ public class Course {
         this.capacity = capacity;
     }
 
-    public int getfId() {
-        return this.fId;
-    }
-
-    public void setfId(int fId) {
-        this.fId = fId;
-    }
-
     @Override
     public String toString() {
-        return id + " | " + name + " | " + start + "-" + end + " | " + capacity;
+        StringBuilder spacedString = new StringBuilder();
+        spacedString.append(id);
+        int length = id.length();
+        while(length < 7) {
+            spacedString.append(" ");
+            length++;
+        }
+        spacedString.append(" | ").append(name);
+        length = name.length();
+        while(length < 30) {
+            spacedString.append(" ");
+            length++;
+        }
+        String formattedDate = this.getFormattedDate(this.start) + "-" + this.getFormattedDate(this.end);
+        spacedString.append(" | ").append(formattedDate);
+        length = formattedDate.length();
+        while(length < 21) {
+            spacedString.append(" ");
+            length++;
+        }
+        return spacedString + " | " + this.capacity;
     }
 }

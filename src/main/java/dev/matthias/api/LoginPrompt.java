@@ -12,9 +12,10 @@ public class LoginPrompt {
         System.out.println( "==================================\n" +
                             "   University Of Wombo Terminal   \n" +
                             "==================================\n" +
-                            "1->Student | 2->Faculty | 3->Quit");
+                            "1->Student   2->Faculty   3->Quit");
         int selection;
-        try (Scanner s = new Scanner(System.in).useDelimiter("\n")) {
+        Scanner s = new Scanner(System.in).useDelimiter("\n");
+        try  {
             selection = s.nextInt();
             if (selection == 1) {
                 LoginPrompt.studentLogin();
@@ -27,7 +28,7 @@ public class LoginPrompt {
     }
     public static void studentLogin() {
         System.out.println("===============================================\n" +
-                            "1->Existing Student | 2->New Student | 3->Quit");
+                            "1->Existing Student   2->New Student   3->Back");
         Student newStudent = new Student();
         StudentPrompt sp = new StudentPrompt(newStudent);
         String email = null;
@@ -53,7 +54,7 @@ public class LoginPrompt {
 
             }else if(selection == 2) {
                 sp.registerNewAccountPrompt();
-            } else LoginPrompt.login();
+            } //else LoginPrompt.login();
         } catch (InputMismatchException e) {
             e.printStackTrace();
         }

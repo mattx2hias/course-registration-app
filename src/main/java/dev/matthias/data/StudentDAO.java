@@ -5,6 +5,8 @@ import dev.matthias.utilities.List;
 
 public interface StudentDAO {
 
+    Student readStudent(String email, String password);
+
     boolean registerNewAccount(Student student);
 
     boolean registerForCourse(int sID, String cId);
@@ -13,7 +15,7 @@ public interface StudentDAO {
 
     boolean cancelRegistration(int sId, String cId);
 
-    List<String> readCourseCatalog();
+    List<String> readCourseCatalog(); // move to courseDAO
 
     boolean checkIfIdExists(int sId);
 

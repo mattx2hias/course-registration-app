@@ -38,12 +38,11 @@ public boolean createCourse(Course course) {
             ps.setLong(4, course.getStart());
             ps.setLong(5, course.getEnd());
             ps.setInt(6, course.getCapacity());
-
-            if(ps.executeUpdate() == 1) {
+            if(ps.executeUpdate() > 0) {
                 Logger.log("Created " + course.getId(), LogLevel.INFO);
                 return true;
             } else {
-                Logger.log("Failed to create course " + course.getId(), LogLevel.WARNING);
+                Logger.log("Failed to create " + course.getId(), LogLevel.INFO);
                 return false;
             }
         } catch (SQLException e) {
@@ -108,9 +107,13 @@ public boolean createCourse(Course course) {
             ps.setLong(4, course.getEnd());
             ps.setInt(5, course.getCapacity());
             ps.setString(6, course.getId());
-            ps.executeUpdate();
-            Logger.log("Updated " + course.getId(), LogLevel.INFO);
-            return true;
+            if(ps.executeUpdate() > 0) {
+                Logger.log("Updated " + course.getId(), LogLevel.INFO);
+                return true;
+            } else {
+                Logger.log("Failed to update " + course.getId(), LogLevel.INFO);
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
@@ -132,31 +135,17 @@ public boolean createCourse(Course course) {
             String query = "delete from course where course_id = ?";
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setString(1, cId);
-            ps.execute();
-            Logger.log("Deleted " + cId, LogLevel.INFO);
-            return true;
+            if(ps.executeUpdate() > 0) {
+                Logger.log("Deleted " + cId, LogLevel.INFO);
+                return true;
+            } else {
+                Logger.log("Failed to deleted " + cId, LogLevel.INFO);
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return false;
-        }
-    }
-
-    @Override
-    public void updateCapacity(String cId, int num) {
-        try {
-            Connection conn = ConnectionUtil.createConnection();
-            Course c = this.readCourseById(cId);
-            int capacity = c.getCapacity();
-            capacity += num;
-            String query = "update course set capacity = ? where course_id = ?";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, capacity);
-            ps.setString(2, cId.toUpperCase(Locale.ROOT));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.log(e.getMessage(), LogLevel.ERROR);
         }
     }
 

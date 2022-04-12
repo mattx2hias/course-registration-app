@@ -9,4 +9,5 @@ public interface FacultyService {
     byte updateCourseDetails(Course c);
 
     boolean deleteCourse(String cId);
+
 }
