@@ -21,7 +21,7 @@ public class LoginPrompt {
                 LoginPrompt.studentLogin();
             } else if (selection == 2) {
                 LoginPrompt.facultyLogin();
-            } else if (selection == 3) return;
+            } else return;
         } catch (InputMismatchException e) {
             e.printStackTrace();
         }

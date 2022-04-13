@@ -31,13 +31,17 @@ public class StudentPrompt {
         this.sDao = new StudentDAOPostgres();
     }
 
+    public StudentPrompt() {
+    }
+
     public void mainMenu() {
         System.out.println( "===================Student_Options=================\n" +
                             "1->View course catalog   2->Register for a course\n" +
                             "3->Cancel registration   4->View enrolled courses\n" +
                             "5->Logout \n" +
                             "===================================================");
-        try (Scanner s = new Scanner(System.in)) {
+        Scanner s = new Scanner(System.in);
+        try {
             switch (s.nextInt()) {
                 case 1: viewCourseCatalogPrompt(); break;
                 case 2: registerPrompt(); break;
